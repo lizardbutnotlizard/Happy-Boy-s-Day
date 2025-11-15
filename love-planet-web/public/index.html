@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div id="loading">
+        <div class="loading-text">✨ Đang tạo vũ trụ của chúng ta...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="progress"></div>
+        </div>
+    </div>
+
+    <button id="music-toggle" title="Phát nhạc">🎵</button>
+
+    <div id="controls">
+        <button class="control-btn" onclick="togglePhotoRing()">🌸 Vòng ảnh</button>
+        <button class="control-btn" onclick="toggleMeteors()">☄️ Sao băng</button>
+        <button class="control-btn" onclick="resetCamera()">🎥 Reset</button>
+        <button class="control-btn" id="insert-photo-btn">➕ Thêm ảnh</button>
+    </div>
+
+    <input type="file" id="image-input" accept="image/*,audio/*" multiple style="display:none">
+
+    <script>
+        // UI helpers: gửi File objects (ảnh +/hoặc audio) tới main.js qua CustomEvent 'photos-selected'
+        (function () {
+            const insertBtn = document.getElementById('insert-photo-btn');
+            const imageInput = document.getElementById('image-input');
+            const canvas = document.getElementById('canvas');
+
+            insertBtn.addEventListener('click', () => imageInput.click());
+
+            imageInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length) {
+                    window.dispatchEvent(new CustomEvent('photos-selected', { detail: files }));
+                }
+                imageInput.value = '';
+            });
+
+            // drag & drop on canvas (ảnh + audio)
+            canvas.addEventListener('dragover', (e) => e.preventDefault());
+            canvas.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const files = Array.from(e.dataTransfer?.files || []);
+                if (files.length) {
+                    window.dispatchEvent(new CustomEvent('photos-selected', { detail: files }));
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
